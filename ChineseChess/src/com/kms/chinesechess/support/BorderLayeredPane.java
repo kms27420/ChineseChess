@@ -62,7 +62,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param comp 위치를 변경하고자하는 컴포넌트
 	 * @param locationType 변경하고자하는 위치의 타입
 	 */
-	public void relocateComponent( Component comp, CompLocationType locationType ) {
+	public void relocateComponent( Component comp, BorderLocationType locationType ) {
 		COMP_MAP.get(comp).setLocationType( locationType );
 		
 		repaint();
@@ -72,7 +72,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param index 위치를 변경하고자하는 컴포넌트의 인덱스
 	 * @param locationType 변경하고자하는 위치의 타입
 	 */
-	public void relocateComponent( int index, CompLocationType locationType ) {
+	public void relocateComponent( int index, BorderLocationType locationType ) {
 		if( index < 0 && index >= getComponentCount() )	throw new IndexOutOfBoundsException();
 		
 		relocateComponent( getComponent(index), locationType );
@@ -85,7 +85,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param locationType 설정하고자하는 컴포넌트의 위치타입
 	 * @param priority 설정하고자하는 컴포넌트의 우선순위
 	 */
-	public void add( Component comp, float widthRate, float heightRate, CompLocationType locationType, Integer priority ) {
+	public void add( Component comp, float widthRate, float heightRate, BorderLocationType locationType, Integer priority ) {
 		if( comp == null )	throw new IllegalArgumentException( "comp is null" );
 		
 		priority = ( priority == null ) ? highestLayer() + 1 : priority;
@@ -100,7 +100,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param heightRate 설정하고자하는 height비율
 	 * @param locationType 설정하고자하는 위치 타입
 	 */
-	public void add( Component comp, float widthRate, float heightRate, CompLocationType locationType ) {
+	public void add( Component comp, float widthRate, float heightRate, BorderLocationType locationType ) {
 		add( comp, widthRate, heightRate, locationType, null );
 	}
 	/**
@@ -128,7 +128,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param locationType 설정하고자하는 locationType
 	 * @param priority 설정하고자하는 우선순위
 	 */
-	public void add( Component comp, CompLocationType locationType, Integer priority ) {
+	public void add( Component comp, BorderLocationType locationType, Integer priority ) {
 		add( comp, 0, 0, locationType, priority );
 	}
 	/**
@@ -136,7 +136,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @param comp 추가하고자하는 컴포넌트
 	 * @param locationType 설정하고자하는 locationType
 	 */
-	public void add( Component comp, CompLocationType locationType ) {
+	public void add( Component comp, BorderLocationType locationType ) {
 		add( comp, 0, 0, locationType );
 	}
 	/**
@@ -217,13 +217,13 @@ public class BorderLayeredPane extends JLayeredPane {
 		private float widthRate;
 		private float heightRate;
 		
-		private CompLocationType locationType;
+		private BorderLocationType locationType;
 		
 		private CompBoundsData() {
 			this( 0, 0, null );
 		}
 		
-		private CompBoundsData( float widthRate, float heightRate, CompLocationType locationType ) {
+		private CompBoundsData( float widthRate, float heightRate, BorderLocationType locationType ) {
 			setSizeRate( widthRate, heightRate );
 			setLocationType( locationType );
 		}
@@ -233,8 +233,8 @@ public class BorderLayeredPane extends JLayeredPane {
 			this.heightRate = isValidRate( heightRate ) ? heightRate : 0.5f;
 		}
 		
-		private void setLocationType( CompLocationType locationType ) {
-			this.locationType = locationType != null ? locationType : CompLocationType.CENTER;
+		private void setLocationType( BorderLocationType locationType ) {
+			this.locationType = locationType != null ? locationType : BorderLocationType.CENTER;
 		}
 		
 		private boolean isValidRate( float rate ) {
@@ -255,7 +255,7 @@ public class BorderLayeredPane extends JLayeredPane {
 			return new Dimension( (int)( getWidth() * widthRate ), (int)( getHeight() * heightRate ) );
 		}
 		
-		private Point getValidLocation( Dimension compSize, CompLocationType locationType ) {
+		private Point getValidLocation( Dimension compSize, BorderLocationType locationType ) {
 			int centerX = ( getWidth() - compSize.width ) / 2;
 			int centerY = ( getHeight() - compSize.height ) / 2;
 			
@@ -286,7 +286,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	 * @author Kwon
 	 *
 	 */
-	public static enum CompLocationType {
+	public static enum BorderLocationType {
 		NORTH(0, -1),
 		SOUTH(0, 1),
 		WEST(-1, 0),
@@ -301,7 +301,7 @@ public class BorderLayeredPane extends JLayeredPane {
 		private final int X_VALUE;
 		private final int Y_VALUE;
 		
-		private CompLocationType( int xValue, int yValue ) {
+		private BorderLocationType( int xValue, int yValue ) {
 			X_VALUE = xValue;
 			Y_VALUE = yValue;
 		}
