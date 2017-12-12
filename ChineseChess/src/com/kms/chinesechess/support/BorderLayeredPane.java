@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.LayoutManager;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,9 +29,7 @@ public class BorderLayeredPane extends JLayeredPane {
 		super.paint(g);
 		
 		for( Component comp : getComponents() ) {
-			comp.setSize( COMP_MAP.get(comp).getValidSize() );
-			comp.setLocation( COMP_MAP.get(comp).getValidLocation() );
-			
+			comp.setBounds( COMP_MAP.get(comp).getValidBounds() );
 			comp.revalidate();
 			comp.repaint();
 		}
@@ -235,18 +234,14 @@ public class BorderLayeredPane extends JLayeredPane {
 			this.locationType = locationType != null ? locationType : BorderLocationType.CENTER;
 		}
 		
-		private Dimension getValidSize() {
-			return new Dimension( (int)( getWidth() * widthRate ), (int)( getHeight() * heightRate ) );
-		}
-		
-		private Point getValidLocation() {
-			int centerX = ( getWidth() - getValidSize().width ) / 2;
-			int centerY = ( getHeight() - getValidSize().height ) / 2;
+		private Rectangle getValidBounds() {
+			int centerX = ( getWidth() - (int)( getWidth() * widthRate ) ) / 2;
+			int centerY = ( getHeight() - (int)( getHeight() * heightRate ) ) / 2;
 			
 			int x = centerX + centerX * locationType.X_VALUE;
 			int y = centerY + centerY * locationType.Y_VALUE;
 			
-			return new Point( x, y );
+			return new Rectangle( x, y, (int)( getWidth() * widthRate ), (int)( getHeight() * heightRate ) );
 		}
 		
 		private boolean isValidRate( float rate ) {
