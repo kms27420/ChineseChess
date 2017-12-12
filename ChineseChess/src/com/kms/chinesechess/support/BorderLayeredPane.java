@@ -44,7 +44,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	public void resizeComponent( Component comp, float widthRate, float heightRate ) {
 		if( !COMP_MAP.containsKey(comp) )	throw new IllegalArgumentException( "there is no comp in this pane" );
 		
-		COMP_MAP.get(comp).setRatio( widthRate, heightRate, COMP_MAP.get(comp).locationType );
+		COMP_MAP.get(comp).setData( widthRate, heightRate, COMP_MAP.get(comp).locationType );
 		repaint();
 	}
 	/**
@@ -66,7 +66,7 @@ public class BorderLayeredPane extends JLayeredPane {
 	public void relocateComponent( Component comp, BorderLocationType locationType ) {
 		if( !COMP_MAP.containsKey(comp) )	throw new IllegalArgumentException( "there is no comp in this pane" );
 		
-		COMP_MAP.get(comp).setRatio( COMP_MAP.get(comp).widthRate, COMP_MAP.get(comp).heightRate, locationType );
+		COMP_MAP.get(comp).setData( COMP_MAP.get(comp).widthRate, COMP_MAP.get(comp).heightRate, locationType );
 		repaint();
 	}
 	/**
@@ -226,10 +226,10 @@ public class BorderLayeredPane extends JLayeredPane {
 		}
 		
 		private CompBoundsData( float widthRate, float heightRate, BorderLocationType locationType ) {
-			setRatio( widthRate, heightRate, locationType );
+			setData( widthRate, heightRate, locationType );
 		}
 		
-		private void setRatio( float widthRate, float heightRate, BorderLocationType locationType ) {
+		private void setData( float widthRate, float heightRate, BorderLocationType locationType ) {
 			this.widthRate = isValidRate( widthRate ) ? widthRate : 0.5f;
 			this.heightRate = isValidRate( heightRate ) ? heightRate : 0.5f;
 			this.locationType = locationType != null ? locationType : BorderLocationType.CENTER;
