@@ -1,10 +1,8 @@
 package com.kms.chinesechess.support;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.LayoutManager;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +21,13 @@ import javax.swing.JLayeredPane;
  */
 public class BorderLayeredPane extends JLayeredPane {
 	private final Map<Component, CompBoundsData> COMP_MAP = new HashMap<>();
+	private final CompUpdater COMP_UPDATER = new CompUpdater();
 	
 	@Override
 	public void paint( Graphics g ) {
 		super.paint(g);
 		
-		for( Component comp : getComponents() ) {
-			comp.setBounds( COMP_MAP.get(comp).getValidBounds() );
-			comp.revalidate();
-			comp.repaint();
-		}
+		COMP_UPDATER.updateComp();
 	}
 	/**
 	 * 컴포넌트의 크기 비율을 변경하는 매서드
@@ -246,6 +241,45 @@ public class BorderLayeredPane extends JLayeredPane {
 		
 		private boolean isValidRate( float rate ) {
 			return rate > 0.0f && rate <= 1.0f;
+		}
+	}
+	/**
+	 * BorderLayeredPane의 컴포넌트의 좌표, 크기에 변화가 생기면 컴포넌트들을 repaint해주는 클래스
+	 * 컴포넌트들의 이전 bounds의 데이터와 update시기에서의 bounds 데이터를 비교하여 변화가 생긴 컴포넌트들에 한하여 업데이트를 실시한다.
+	 * @author Kwon
+	 *
+	 */
+	private class CompUpdater {
+		private final Map<Component, Rectangle> COMP_BOUNDS = new HashMap<>();
+		
+		private boolean isBoundsChanged( Rectangle previous, Rectangle current ) {
+			return previous.x != current.x || previous.y != current.y || previous.width != current.width || previous.height != current.height;
+		}
+		
+		private void updateComp() {
+			boolean isRepaintable = false;
+			
+			for( Component comp : getComponents() ) {
+				isRepaintable = false;
+				
+				if( !COMP_BOUNDS.containsKey(comp) ) {
+					COMP_BOUNDS.put(comp, COMP_MAP.get(comp).getValidBounds());
+					isRepaintable = true;
+				} else if( isBoundsChanged( COMP_MAP.get(comp).getValidBounds(), COMP_BOUNDS.get(comp) ) ){
+					COMP_BOUNDS.get(comp).setBounds(COMP_MAP.get(comp).getValidBounds());
+					isRepaintable = true;
+				}
+				
+				if( !isRepaintable )	continue;
+				
+				comp.setBounds(COMP_BOUNDS.get(comp));
+				comp.revalidate();
+				comp.repaint();
+			}
+			
+			for( Component comp : COMP_BOUNDS.keySet() ) {
+				if( !COMP_MAP.containsKey(comp) )	COMP_BOUNDS.remove(comp);
+			}
 		}
 	}
 	/**
