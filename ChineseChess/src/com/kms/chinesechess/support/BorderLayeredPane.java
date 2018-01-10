@@ -86,7 +86,7 @@ public class BorderLayeredPane extends JLayeredPane {
 		
 		priority = ( priority == null ) ? highestLayer() + 1 : priority;
 		
-		COMP_MAP.put( comp, new CompBoundsData( widthRate, heightRate, locationType ) );
+		COMP_MAP.put(comp, new CompBoundsData( widthRate, heightRate, locationType ));
 		super.add( comp, priority );
 	}
 	/**
@@ -153,8 +153,8 @@ public class BorderLayeredPane extends JLayeredPane {
 	@Override
 	public void remove( int index ) {
 		if( index < 0 || index >= getComponentCount() )	throw new IndexOutOfBoundsException();
-		
-		remove( getComponent( index ) );
+		COMP_MAP.remove(getComponent(index));
+		super.remove(index);
 	}
 	
 	@Override
@@ -250,35 +250,17 @@ public class BorderLayeredPane extends JLayeredPane {
 	 *
 	 */
 	private class CompUpdater {
-		private final Map<Component, Rectangle> COMP_BOUNDS = new HashMap<>();
-		
 		private boolean isBoundsChanged( Rectangle previous, Rectangle current ) {
 			return previous.x != current.x || previous.y != current.y || previous.width != current.width || previous.height != current.height;
 		}
 		
 		private void updateComp() {
-			boolean isRepaintable = false;
-			
 			for( Component comp : getComponents() ) {
-				isRepaintable = false;
+				if( !isBoundsChanged( comp.getBounds(), COMP_MAP.get(comp).getValidBounds() ) )	continue;
 				
-				if( !COMP_BOUNDS.containsKey(comp) ) {
-					COMP_BOUNDS.put(comp, COMP_MAP.get(comp).getValidBounds());
-					isRepaintable = true;
-				} else if( isBoundsChanged( COMP_MAP.get(comp).getValidBounds(), COMP_BOUNDS.get(comp) ) ){
-					COMP_BOUNDS.get(comp).setBounds(COMP_MAP.get(comp).getValidBounds());
-					isRepaintable = true;
-				}
-				
-				if( !isRepaintable )	continue;
-				
-				comp.setBounds(COMP_BOUNDS.get(comp));
+				comp.setBounds(COMP_MAP.get(comp).getValidBounds());
 				comp.revalidate();
 				comp.repaint();
-			}
-			
-			for( Component comp : COMP_BOUNDS.keySet() ) {
-				if( !COMP_MAP.containsKey(comp) )	COMP_BOUNDS.remove(comp);
 			}
 		}
 	}
